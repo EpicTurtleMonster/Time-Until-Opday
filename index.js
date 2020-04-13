@@ -8,11 +8,19 @@ client.login(config.token);
 //Once the client is ready, lets the user know
 client.once('ready', () => {
 	console.log('Ready!');
+	client.user.setActivity("Prefix is '!'", {type: "WATCHING"});
 });
 
-//Opday from the day I wrote this, dateCalc should have been adding a week's worth of milliseconds
-//every time opday rolls around, but if you have a better idea for how to do this I'm all ears
-var opday = Date.parse('18 Apr 2020 18:00:00 GMT');
+//Sets opday by subtracting the numeric value of the day this is launched from the numeric
+//value of Saturday, then adding that to the current date
+var today = new Date;
+var dayOfWeek = today.getDay();
+var daysUntilOpday = 6 - dayOfWeek;
+today.setDate(today.getDate() + daysUntilOpday);
+var opday = today;
+opday.setHours(10);
+opday.setMinutes(0);
+opday.setSeconds(0);
 
 //Looks for the command '!opday' in all channels of the Discord, then posts the results of dateCalc
 //into the channel it was summoned in
@@ -37,7 +45,7 @@ function dateCalc(opday) {
 	//If an opday has passed, it moves the variable for opday up a week in miliseconds, then continues
 	//the calculation
 	if(timeUntil < 0) {
-		opday = opday + 604800000;
+		opday.setDate(opday.getDate() + 7);
 		timeUntil = opday - today;
 	}
 
